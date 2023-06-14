@@ -1,7 +1,7 @@
 import logging
 import asyncio
 import telegram
-from telegram.ext import filters, ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler
+from telegram.ext import filters, Application, ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -12,7 +12,13 @@ logging.basicConfig(
 )
 
 async def start(update: telegram.Update, context: ContextTypes.DEFAULT_TYPE):
+    logging.info(f"START")
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Yo so un bot. Avle kon me, por favor!")
+
+async def help(update: telegram.Update, context: ContextTypes.DEFAULT_TYPE):
+    logging.info(f"help")
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="Yo so un bot. Avle kon me, por favor! https://kantoniko.com/")
+
 
 async def echo(update: telegram.Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
@@ -35,21 +41,29 @@ async def translate(update: telegram.Update, context: ContextTypes.DEFAULT_TYPE)
 
 #        echar_lashon_id = -810127428
 
+async def post_init(application: Application) -> None:
+    logging.info(f"post_init")
+    #await application.bot.set_my_commands([('start', 'Starts the bot'), ('traduse', 'Tradusir una palavara')])
+    await application.bot.set_my_commands([('ayuda', 'Ayudame!'), ('traduse', 'Tradusir una palavara')])
+
 
 if __name__ == '__main__':
     token = os.environ.get('token')
     if not token:
         exit("No token found")
 
-    application = ApplicationBuilder().token(token).build()
-
+    application = ApplicationBuilder().token(token).post_init(post_init).build()
     #echo_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), echo)
-    start_handler = CommandHandler('start', start)
+    #start_handler = CommandHandler('start', start)
+    help_handler = CommandHandler('ayuda', help)
     translate_handler = CommandHandler('traduse', translate)
 
-    application.add_handler(start_handler)
+    #application.add_handler(start_handler)
     #application.add_handler(echo_handler)
+    application.add_handler(help_handler)
     application.add_handler(translate_handler)
+    #print(dir(application))
+    #print(dir(application.bot))
 
     application.run_polling()
 
