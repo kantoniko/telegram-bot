@@ -51,7 +51,7 @@ async def translate(update: telegram.Update, context: ContextTypes.DEFAULT_TYPE)
         await context.bot.send_message(chat_id=update.effective_chat.id, text="No puedo tradusir ekspresiones kon mas de una palavra!")
         return
     if len(context.args) == 0:
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="Tenemos de tener una palavra: /traduse kaza")
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="Tenemos de tener una palavra: /tr kaza")
         return
 
     text = context.args[0]
@@ -81,7 +81,7 @@ if __name__ == '__main__':
     message_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), handle_message)
     #start_handler = CommandHandler('start', start)
     help_handler = CommandHandler('ayuda', help)
-    translate_handler = CommandHandler('traduse', translate)
+    translate_handler = CommandHandler('tr', translate)
 
     #application.add_handler(start_handler)
     #application.add_handler(echo_handler)
